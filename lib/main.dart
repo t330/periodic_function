@@ -5,97 +5,91 @@ import 'package:provider/provider.dart';
 import 'clock.dart';
 
 void main() => runApp(
-  MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: MyApp(),
-  ),
-);
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: MyApp(),
+      ),
+    );
 
 class MyApp extends StatelessWidget {
-  int _value = 5;
+  final int value = 5;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'aaaaadsfsd',
+      title: 'periodic_function',
       home: ChangeNotifierProvider<MainModel>(
         create: (_) => MainModel(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            '同期信号アプリ'
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text('同期信号アプリ'),
           ),
-        ),
-        body: Consumer<MainModel>(builder: (context, model, child) {
-          return Column(
-              children: [
-                Center(
+          body: Consumer<MainModel>(
+            builder: (context, model, child) {
+              return Column(
+                children: [
+                  Center(
                     child: Column(
-                      children: <Widget>[
+                      children: [
                         Text(
                           model.numberOfFlashes.toString(),
                         ),
-                        DropdownButton (
-                          value: _value,
+                        DropdownButton(
+                          // value: value,
+                          value: model.value,
                           items: [
                             DropdownMenuItem(
-                              child: Text(
-                                '5秒ごと'
-                              ),
+                              child: Text('5秒ごと'),
                               value: 5,
                             ),
                             DropdownMenuItem(
-                              child: Text(
-                                '5分ごと'
-                              ),
+                              child: Text('5分ごと'),
                               value: 300,
                             ),
                             DropdownMenuItem(
-                              child: Text(
-                                '10分ごと'
-                              ),
+                              child: Text('10分ごと'),
                               value: 600,
                             ),
                           ],
                           onChanged: (value) {
-                            _value = value;
+                            model.changeDropdownMenuItem(value);
                           },
                         ),
                         RaisedButton(
-                          child: Text(
-                            '開始する'
-                          ),
-                          onPressed: model.isStarting ? null : () {
-                            model.initialFlashlight(_value);
-                            print('開始した！');
-                          },
+                          child: Text('開始する'),
+                          onPressed: model.isStarting
+                              ? null
+                              : () {
+                                  model.initialFlashlight(model.value);
+                                  print(model.value.toString() + '秒で開始した！');
+                                },
                         ),
                         RaisedButton(
-                          child: Text(
-                            '停止する'
-                          ),
-                          onPressed: !model.isStarting ? null : () {
-                            model.cancelInitialFlashlight();
-                            print('停止した！');
-                          },
+                          child: Text('停止する'),
+                          onPressed: !model.isStarting
+                              ? null
+                              : () {
+                                  model.cancelInitialFlashlight();
+                                  print('停止した！');
+                                },
                         ),
                         Clock(),
                       ],
                     ),
                   ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: model.flashHistory.length,
-                    itemBuilder: (context, int index) {
-                      return Text(
-                        model.flashHistory[index],
-                        style: GoogleFonts.robotoMono(fontSize: 20),
-                      );
-                    },
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: model.flashHistory.length,
+                      itemBuilder: (context, int index) {
+                        return Text(
+                          model.flashHistory[index],
+                          style: GoogleFonts.robotoMono(fontSize: 20),
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
-          );
+                ],
+              );
             },
           ),
         ),
